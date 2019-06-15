@@ -1,0 +1,33 @@
+package ${parentPackage}.event;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import java.util.function.Consumer;
+
+
+@Service
+@Slf4j
+public class EventHandler implements ApplicationListener<Event> {
+
+
+    @Override
+    @Async
+    public void onApplicationEvent(Event event) {
+        Consumer<Event> c = EventCenter.consumers.get(event.getName());
+        if(c==null){
+            log.info("未注册事件：{}",event.getName());
+        }else{
+            c.accept(event);
+            log.debug("完成事件处理：{}",event.getName());
+        }
+    }
+
+
+
+
+}
+
+

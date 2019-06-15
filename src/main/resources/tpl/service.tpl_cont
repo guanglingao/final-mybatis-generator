@@ -1,0 +1,128 @@
+package ${context.parentPackage}.${param.servicePackageName};
+
+import ${context.parentPackage}.${param.entityPackageName}.${context.javaBeanName}${param.entitySuffix};
+import ${context.parentPackage}.${param.mapperPackageName}.${context.javaBeanName}${param.mapperClassSuffix};
+import com.zhisland.finalmybatis.query.Query;
+import lombok.Data;
+import java.util.List;
+
+
+@Data
+public class ${context.javaBeanName}${param.serviceSuffix} {
+
+
+    private ${context.javaBeanName}${param.mapperClassSuffix} mapper;
+
+    public ${context.javaBeanName}${param.serviceSuffix}(){
+
+    }
+    public ${context.javaBeanName}${param.serviceSuffix}(${context.javaBeanName}${param.mapperClassSuffix} mapper){
+        this.mapper = mapper;
+    }
+
+
+    /**
+     * 保存数据记录
+     * @param o
+     * @return 返回新增记录的主键
+     */
+    #foreach($column in $columns)
+    #if(${column.isPrimaryKey()})
+    public ${column.javaTypeBox} add(${context.javaBeanName}${param.entitySuffix} o){
+        mapper.insert(o);
+        return o.get${column.javaFieldNameUF}();
+    }
+    #end
+    #end
+
+
+
+    /**
+     * 批量增添记录
+     * @param list 待存储记录列表
+     */
+    public void addBatch(List<${context.javaBeanName}${param.entitySuffix}> list){
+        mapper.insertBatch(list);
+    }
+
+
+
+    /**
+     * 根据ID，单个更新
+     * @param o
+     */
+    public void update(${context.javaBeanName}${param.entitySuffix} o){
+            mapper.update(o);
+    }
+
+
+
+    /**
+     * 批量更新
+     * @param list
+     */
+    public void updateBatch(List<${context.javaBeanName}${param.entitySuffix}> list){
+        for(${context.javaBeanName} o:list){
+            mapper.update(o);
+        }
+    }
+
+
+
+    /**
+     * 按照ID删除
+     * @param id
+     */
+    public void delete(${pk.javaTypeBox} id){
+        mapper.deleteById(id);
+    }
+
+
+
+    /**
+     * 批量删除
+     * @param list
+     */
+    public void deleteBatch(List<${pk.javaTypeBox}> list){
+        for(${pk.javaTypeBox} id:list) {
+            mapper.deleteById(id);
+        }
+    }
+
+
+
+    /**
+     * 统计表中记录总数
+     * @return 表记录总数
+     */
+    public Long count(){
+        return mapper.getCount(new Query());
+    }
+
+
+
+    /**
+     * 按照页码查询
+     * @param pageIndex 当前第几页
+     * @param pageSize 每页显示数据数
+     * @return 返回查询页的数据
+     */
+    public List<${context.javaBeanName}${param.entitySuffix}> listPage(int pageIndex,int pageSize){
+        return mapper.list(new Query().page(pageIndex,pageSize));
+    }
+
+
+
+    /**
+     * 按照ID查询
+     * @param id
+     * @return
+     */
+    public ${context.javaBeanName}${param.entitySuffix} get(${pk.javaTypeBox} id){
+        return mapper.getById(id);
+    }
+
+
+
+
+}

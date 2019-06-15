@@ -1,0 +1,124 @@
+package ${parentPackage}.controller.common;
+
+import net.sf.json.JSONObject;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import net.sf.json.JsonConfig;
+import net.sf.json.processors.JsonValueProcessor;
+
+
+/**
+ * 用于Java数据类型对象转化为JSON字符串格式输出
+ */
+@SuppressWarnings("serial")
+public class JSON implements Serializable {
+
+    private Map<String,Object> map = new HashMap<>();
+
+
+    public static JSON JSON_OK(Object data){
+        JSON json = new JSON();
+        json.put("code","0");
+        json.put("msg","ok");
+        json.put("data",data);
+        return json;
+    }
+
+    public static JSON JSON_ERROR(Object data){
+        JSON json = new JSON();
+        json.put("code","-1");
+        json.put("msg","error");
+        json.put("data",data);
+        return json;
+    }
+
+    public JSON(){
+
+    }
+
+    public JSON(Map<String,Object> map){
+        this.map = map;
+    }
+
+    public void put(String key,Object value){
+        map.put(key,value);
+    }
+
+    @Override
+    public String toString(){
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(java.util.Date.class, new JsonDateValueProcessor("yyyy-MM-dd HH:mm:ss"));
+        jsonConfig.registerJsonValueProcessor(java.sql.Date.class, new JsonDateValueProcessor("yyyy-MM-dd HH:mm:ss"));
+        jsonConfig.registerJsonValueProcessor(java.sql.Time.class, new JsonTimeValueProcessor());
+        JSONObject jsonObj = JSONObject.fromObject(map,jsonConfig);
+        return jsonObj.toString();
+    }
+
+
+}
+
+
+
+class JsonTimeValueProcessor implements JsonValueProcessor {
+    private String format = "HH:mm:ss";
+    public JsonTimeValueProcessor() {
+        super();
+    }
+    public JsonTimeValueProcessor(String format) {
+        super();
+        this.format = format;
+    }
+    @Override
+    public Object processArrayValue(Object paramObject, JsonConfig paramJsonConfig) {
+        return process(paramObject);
+    }
+
+    @Override
+    public Object processObjectValue(String paramString, Object paramObject, JsonConfig paramJsonConfig) {
+        return process(paramObject);
+    }
+
+    private Object process(Object value) {
+        if (value instanceof java.sql.Time) {
+            SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.CHINA);
+            return sdf.format(value);
+        }
+        return value == null ? "" : value.toString();
+    }
+
+}
+
+class JsonDateValueProcessor implements JsonValueProcessor {
+    private String format = "yyyy-MM-dd HH:mm:ss,SSS";
+
+    public JsonDateValueProcessor() {
+        super();
+    }
+
+    public JsonDateValueProcessor(String format) {
+        super();
+        this.format = format;
+    }
+
+    @Override
+    public Object processArrayValue(Object paramObject, JsonConfig paramJsonConfig) {
+        return process(paramObject);
+    }
+
+    @Override
+    public Object processObjectValue(String paramString, Object paramObject, JsonConfig paramJsonConfig) {
+        return process(paramObject);
+    }
+
+    private Object process(Object value) {
+        if (value instanceof java.util.Date || value instanceof java.sql.Date) {
+            SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.CHINA);
+            return sdf.format(value);
+        }
+        return value == null ? "" : value.toString();
+    }
+
+}

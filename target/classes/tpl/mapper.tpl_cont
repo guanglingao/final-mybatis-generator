@@ -1,0 +1,10 @@
+package ${context.parentPackage}.${param.mapperPackageName};
+
+import com.zhisland.finalmybatis.mapper.CRUDMapper;
+import ${context.parentPackage}.${param.entityPackageName}.${context.javaBeanName}${param.entitySuffix};
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ${context.javaBeanName}${param.mapperClassSuffix} extends CRUDMapper<${context.javaBeanName}${param.entitySuffix}, ${pk.javaTypeBox}> {
+
+}

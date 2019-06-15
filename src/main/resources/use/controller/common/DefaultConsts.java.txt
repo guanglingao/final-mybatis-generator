@@ -1,0 +1,10 @@
+package ${parentPackage}.controller.common;
+
+
+public class DefaultConsts {
+
+    /**默认每页显示记录数**/
+    public static final int PAGE_SIZE = 30;
+
+
+}

@@ -1,0 +1,103 @@
+package ${parentPackage}.config;
+
+
+import ${parentPackage}.controller.interceptor.GlobalInterceptor;
+import ${parentPackage}.controller.interceptor.CrossDomainInterceptor;
+import org.apache.catalina.Context;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+
+import java.nio.charset.Charset;
+import java.util.List;
+
+
+@Configuration
+public class WebConfiguration implements WebMvcConfigurer {
+
+
+    @Autowired
+    private GlobalInterceptor globalInterceptor;
+    @Autowired
+    private CrossDomainInterceptor crossDomainInterceptor;
+
+
+    /**
+     * 拦截器配置
+     *
+     * @param registry
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(globalInterceptor)
+                .addPathPatterns(globalInterceptor.getIncludePathPatterns())
+                .excludePathPatterns(globalInterceptor.getExcludePathPatterns());
+        registry.addInterceptor(crossDomainInterceptor)
+                        .addPathPatterns(crossDomainInterceptor.getIncludePathPatterns())
+                        .excludePathPatterns(crossDomainInterceptor.getExcludePathPatterns());
+    }
+
+
+    /**
+     * 设置统一输出编码
+     *
+     * @param converters
+     */
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+        stringHttpMessageConverter.setWriteAcceptCharset(false);
+        converters.add(stringHttpMessageConverter);
+    }
+
+
+
+
+    /**
+     * 设置请求参数（一般为字符串类型）解析
+     *
+     * @return
+     */
+    @Bean
+    public RequestMappingHandlerAdapter getRequestMappingHandlerAdapter() {
+        RequestMappingHandlerAdapter r = new RequestMappingHandlerAdapter();
+        r.setWebBindingInitializer(new RequestParamBinding());
+        return r;
+    }
+
+
+    /**
+     * 使用HTTPS
+     *
+     * @return
+     *
+
+    @Bean
+    public ServletWebServerFactory servletWebServerFactory() {
+        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory() {
+            @Override
+            protected void postProcessContext(Context context) {
+                SecurityConstraint securityConstraint = new SecurityConstraint();
+                securityConstraint.setUserConstraint("CONFIDENTIAL");//机密的
+                SecurityCollection securityCollection = new SecurityCollection();
+                securityCollection.addPattern("/*");
+                securityConstraint.addCollection(securityCollection);
+                context.addConstraint(securityConstraint);
+            }
+        };
+        return factory;
+    }
+
+    */
+
+
+}

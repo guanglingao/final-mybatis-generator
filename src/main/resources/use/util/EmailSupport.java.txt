@@ -1,0 +1,70 @@
+package ${parentPackage}.util;
+
+
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+@Component
+public class EmailSupport {
+
+    private final static Logger log = LoggerFactory.getLogger(EmailSupport.class);
+    private ExecutorService executorService = Executors.newFixedThreadPool(6);
+
+
+    @Value("${email.host}")
+    private String host;
+
+    @Value("${email.authentication.username}")
+    private String username;
+
+    @Value("${email.authentication.password}")
+    private String password;
+
+    @Value("${email.from.e_address}")
+    private String fromAddress;
+
+    @Value("${email.from.alias}")
+    private String fromAlias;
+
+
+    /**
+     * 发送HTML格式的邮件
+     *
+     * @param to      接收人邮箱地址
+     * @param subject 邮件标题
+     * @param htmlMsg （HTML格式）邮件内容
+     * @return
+     */
+    public void SendHtml(String to, String subject, String htmlMsg) {
+        try {
+            HtmlEmail email = new HtmlEmail();
+            email.setHostName(host);
+            email.setAuthentication(username, password);
+            email.addTo(to);
+            email.setFrom(fromAddress, fromAlias);
+            email.setHtmlMsg(htmlMsg);
+            email.setSubject(subject);
+            email.setCharset("UTF-8");
+            executorService.execute(() -> {
+                try {
+                    email.send();
+                    log.info("邮件发送成功：\nTO => {}\nCONTENT => {}", to, htmlMsg);
+                } catch (EmailException e) {
+                    e.printStackTrace();
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+}

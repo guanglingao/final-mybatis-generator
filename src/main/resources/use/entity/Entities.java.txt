@@ -1,0 +1,34 @@
+package ${parentPackage}.entity;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Repository;
+
+#foreach($tableName in $tableNames)
+import ${parentPackage}.${param.servicePackageName}.${tableName}${param.serviceSuffix};
+import ${parentPackage}.${param.mapperPackageName}.${tableName}${param.mapperClassSuffix};
+#end
+
+
+
+
+@Repository
+public class Entities {
+
+
+    #foreach($tableName in $tableNames)
+@Autowired
+    private ${tableName}${param.mapperClassSuffix} mapper${velocityCount};
+    #end
+
+    #foreach($tableName in $tableNames)
+@Bean
+    public ${tableName}${param.serviceSuffix} ${tableName}${param.serviceSuffix}(){
+        return new ${tableName}${param.serviceSuffix}(mapper${velocityCount});
+    }
+    #end
+
+
+
+}

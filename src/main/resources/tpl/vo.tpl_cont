@@ -1,0 +1,61 @@
+package ${context.parentPackage}.${param.voPackageName};
+
+#if(${param.serializable}=="true")
+import java.io.Serializable;
+#end
+#if(${table.hasDateField})
+import java.util.Date;
+#end
+#if(${table.hasBigDecimalField})
+import java.math.BigDecimal;
+#end
+import lombok.Data;
+import org.springframework.beans.BeanUtils;
+import ${context.parentPackage}.${param.entityPackageName}.${context.javaBeanName}${param.entitySuffix};
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+
+#if("$!{table.comment}" != "" )
+/**
+ * ${table.name}
+ */
+#end
+@Data
+@SuppressWarnings("serial")
+public class ${context.javaBeanName}${param.voClassSuffix} implements Serializable {
+
+#foreach($column in $columns)
+        /** #if("$!{column.comment}" != "")${column.comment}；#end ${column.name} */
+    	public ${column.javaTypeBox} ${column.javaFieldName};
+#end
+
+        public static ${context.javaBeanName}${param.voClassSuffix} fromPO(${context.javaBeanName}${param.entitySuffix} po){
+            ${context.javaBeanName}${param.voClassSuffix} vo = new ${context.javaBeanName}${param.voClassSuffix}();
+            BeanUtils.copyProperties(po, vo);
+            return vo;
+        }
+
+
+        public static List<${context.javaBeanName}${param.voClassSuffix}> fromPO(List<${context.javaBeanName}${param.entitySuffix}> pos){
+            List<${context.javaBeanName}${param.voClassSuffix}> r = new ArrayList();
+            if(pos==null || pos.size()==0){
+                return Collections.EMPTY_LIST;
+            }
+            for (${context.javaBeanName}${param.entitySuffix} po : pos){
+                r.add(fromPO(po));
+            }
+            return r;
+        }
+
+
+        public ${context.javaBeanName}${param.entitySuffix} toPO(){
+            ${context.javaBeanName}${param.entitySuffix} po = new ${context.javaBeanName}();
+            #foreach(${column} in ${columns})
+            po.set${column.javaFieldNameUF}(${column.javaFieldName});
+            #end
+            return po;
+        }
+
+}

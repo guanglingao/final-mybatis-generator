@@ -1,0 +1,60 @@
+package ${parentPackage}.event;
+
+import lombok.Data;
+import org.springframework.context.ApplicationEvent;
+
+
+@Data
+public class Event extends ApplicationEvent {
+
+    /** 事件名称 **/
+    private String name;
+    /** 事件描述 **/
+    private String description;
+    /** 所携带的元数据 **/
+    private Object value;
+    /** 事件来源 **/
+    private Object source;
+
+    /**
+     * @param name 事件名称
+     * @param source 事件来源
+     */
+    public Event(String name,Object source){
+        super(source);
+        this.name = name;
+    }
+
+
+
+    /**
+     * @param name 事件名称
+     * @param description 事件描述
+     * @param source 事件来源
+     */
+    public Event(String name,String description,Object source){
+        super(source);
+        this.name = name;
+        this.description = description;
+    }
+
+
+    /**
+     * @param name 事件名称
+     * @param description 事件描述
+     * @param value 所携带的元数据
+     * @param source 事件来源
+     */
+    public Event(String name,String description,Object value,Object source){
+        super(source);
+        this.name = name;
+        this.description = description;
+        this.value = value;
+        this.source = source;
+    }
+
+
+
+}
+
+

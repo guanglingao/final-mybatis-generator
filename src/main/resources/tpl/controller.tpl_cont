@@ -1,0 +1,149 @@
+package ${context.parentPackage}.${param.controllerPackageName};
+
+
+import ${context.parentPackage}.controller.common.JSON;
+import ${context.parentPackage}.controller.common.DefaultConsts;
+import ${context.parentPackage}.${param.entityPackageName}.${context.javaBeanName}${param.entitySuffix};
+import ${context.parentPackage}.${param.voPackageName}.${context.javaBeanName}${param.voClassSuffix};
+import ${context.parentPackage}.${param.servicePackageName}.${context.javaBeanName}${param.serviceSuffix};
+import ${context.parentPackage}.event.Event;
+import ${context.parentPackage}.event.EventCenter;
+import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+@Api("$!{table.comment}")
+@Slf4j
+@RestController
+@RequestMapping("/${context.javaBeanName.toLowerCase()}")
+public class ${context.javaBeanName}${param.controllerSuffix} {
+
+
+    @Autowired
+    private ${context.javaBeanName}${param.serviceSuffix} entity;
+
+    @Autowired
+    private EventCenter eventCenter;
+
+
+    @PostConstruct
+    private void init(){
+       // eventCenter.onEvent("${context.javaBeanName}-Deleted",e->log.info("已删除记录,ID："+e.getValue()));
+    }
+
+
+    /**
+     * 根据ID读取
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "查询",notes = "根据ID查询单条记录")
+    @RequestMapping(value="/get",method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    public String getById(@RequestParam("id") ${pk.javaTypeBox} id){
+        ${context.javaBeanName}${param.entitySuffix} po = entity.get(id);
+        return JSON.JSON_OK(${context.javaBeanName}${param.voClassSuffix}.fromPO(po)).toString();
+    }
+
+
+
+    /**
+     * 新增
+     * @param model
+     * @return
+     */
+    @ApiOperation(value = "新增",notes = "新增记录，若使用数据库自增此处ID将被舍弃")
+    @ApiImplicitParam(name = "id",value = "若使用数据库自增此处ID将被舍弃")
+    @RequestMapping(value="add",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    public String add(@ModelAttribute ${context.javaBeanName}${param.entitySuffix} model){
+        try{
+            Object id = entity.add(model);
+            return JSON.JSON_OK("成功，ID："+id).toString();
+        }catch (Exception e){
+            log.error("新增记录发生错误："+e.getMessage());
+            e.printStackTrace();
+            return JSON.JSON_ERROR(e.getMessage()).toString();
+        }
+    }
+
+
+
+    /**
+     * 根据ID执行删除
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "删除",notes = "删除指定ID的记录")
+    @RequestMapping(value="/delete",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    public String delete(@RequestParam("id") ${pk.javaTypeBox} id){
+        try{
+            entity.delete(id);
+            // eventCenter.publish(new Event("${context.javaBeanName}-Deleted","删除$!{table.comment}事件",id,this));
+            return JSON.JSON_OK("成功").toString();
+        }catch (Exception e){
+            log.error("删除记录发生错误："+e.getMessage());
+            e.printStackTrace();
+            return JSON.JSON_ERROR(e.getMessage()).toString();
+        }
+    }
+
+
+
+    /**
+     * 根据ID执行更新
+     * @param model
+     * @return
+     */
+    @ApiOperation(value = "更新",notes = "根据ID更新数据记录")
+    @RequestMapping(value="/update",method = RequestMethod.POST,produces = "application/json;charset=UTF-8")
+    public String update(@ModelAttribute ${context.javaBeanName}${param.entitySuffix} model){
+        try{
+            entity.update(model);
+            return JSON.JSON_OK("成功").toString();
+        }catch (Exception e){
+            log.error("更新记录发生错误："+e.getMessage());
+            e.printStackTrace();
+            return JSON.JSON_ERROR(e.getMessage()).toString();
+        }
+    }
+
+
+
+        /**
+         * 分页查询
+         * @param page 当前页码
+         * @param limit 每页显示记录数
+         * @return
+         */
+        @ApiOperation(value = "分页查询",notes = "若不设置当前页码或页面记录数，将使用默认值（1，30）")
+        @RequestMapping(value="/list",method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+        public String listPage(
+                @ApiParam(name = "page",value = "当前页码")
+                @RequestParam(value="page",required = false) Integer page,
+                @ApiParam(name = "limit",value = "每页显示记录数")
+                @RequestParam(value="limit",required = false) Integer limit){
+            if (page == null || page == 0) {
+                page = 1;
+            }
+            if (limit == null || limit == 0) {
+                limit = DefaultConsts.PAGE_SIZE;
+            }
+            List<${context.javaBeanName}${param.entitySuffix}> list = entity.listPage(page,limit);
+            Long total = entity.count();
+            Map<String,Object> rst = new HashMap();
+            rst.put("total", total);
+            rst.put("list", ${context.javaBeanName}${param.voClassSuffix}.fromPO(list));
+            rst.put("page", page);
+            rst.put("limit", limit);
+            return JSON.JSON_OK(rst).toString();
+        }
+
+
+
+
+}

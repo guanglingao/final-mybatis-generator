@@ -1,0 +1,45 @@
+server:
+  port: 8080
+  # 使用HTTPS请去除以下注释
+  # ssl:
+    # key-store: keystore.p12 # 请自生成此文件
+    # key-alias: tomcat
+    # key-store-type: PKCS12
+    # key-store-password: zhisland.com
+
+logging:
+  file: /Users/gaoguanglin/Desktop/app.log
+  level:
+    root: info
+    ${parentPackage}: debug
+
+
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  base-package: ${parentPackage}.mapper
+
+email:  # 邮件发送
+  host: smtp.163.com
+  authentication:
+    username: g15653125630@163.com
+    password: zhisland1115
+  from:
+    e_address: g15653125630@163.com
+    alias: 高广林
+
+swagger:
+  enable: true  # 默认为true
+  title: API    # 项目名称
+  description: System API Document   #项目文档详细描述
+  version: 1.0.0  # 版本号
+  contact:
+    name: 高广林  # 联系人
+    url: http://192.168.2.101:82/gaoguanglin/
+    mail: gaoguanglin@zhisland.com
+
+spring:
+  datasource:
+    driver-class-name: ${param.driverClass}
+    url: ${param.jdbcUrl}
+    username: ${param.username}
+    password: ${param.password}

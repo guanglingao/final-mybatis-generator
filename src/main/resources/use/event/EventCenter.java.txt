@@ -1,0 +1,49 @@
+package ${parentPackage}.event;
+
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.stereotype.Service;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
+/**
+ * 用法：
+ *     @Autowired
+ *     private EventCenter eventCenter;
+ *     . . .
+ *     // 事件注册
+ *     eventCenter.onEvent("delete",e->System.out.println(e.getName()));
+ *     . . .
+ *     // 事件发生
+ *     eventCenter.publish(new Event("delete",this));
+ */
+@Service
+@EnableAsync
+@Slf4j
+public class EventCenter  {
+
+    @Autowired
+    private ApplicationContext appCtx;
+
+    /** 事件执行存储映射 **/
+    protected static Map<String,Consumer<Event>> consumers = new HashMap();
+
+
+    public void publish(Event event){
+        appCtx.publishEvent(event);
+    }
+
+    public void onEvent(String evtName, Consumer<Event> c){
+        consumers.put(evtName,c);
+        log.debug("事件已注册：{}",evtName);
+    }
+
+
+
+}
+
+

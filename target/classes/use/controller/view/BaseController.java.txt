@@ -1,0 +1,34 @@
+package ${parentPackage}.controller.view;
+
+import ${parentPackage}.util.HttpReferer;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.time.Instant;
+
+@Controller
+@Slf4j
+public class BaseController {
+
+
+    @Autowired
+    private HttpReferer httpReferer;
+
+    /**
+     * 填充model通用数据
+     * @param request
+     * @param model
+     */
+    @ModelAttribute
+    public void fulfillModel(HttpServletRequest request, HttpServletResponse response, Model model){
+        String ip = httpReferer.getClientIp(request);
+        log.info("==> Request IP: {}",ip);
+        model.addAttribute("instant",Instant.now());
+        model.addAttribute("ip",ip);
+    }
+
+}
