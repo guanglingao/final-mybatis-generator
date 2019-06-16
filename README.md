@@ -1,8 +1,14 @@
+## 支持的数据库
+
+#### MySQL 、 MS-SQLServer
+
+
 ## 〇、为什么使用final-mybatis
 
 - 无需mybatis映射xml文件配置SQL查询
 - 链式SQL支持
 - 代码自动生成工具
+
 
 ## 一、用法
 
