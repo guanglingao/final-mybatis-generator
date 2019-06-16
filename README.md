@@ -20,7 +20,7 @@
 ```    
   
    
-- 创建数据库连接配置文件 generator.properties （必须使用此文件名）    
+- 创建数据库连接配置文件resources/generator.properties （必须使用此文件名）    
 
   简洁配置请参考：
 ```
@@ -30,8 +30,8 @@
     generator.database.jdbc_url=jdbc:mysql://localhost:3306/db_weizhan?useUnicode=true&characterEncoding=utf-8
     generator.database.username=root
     generator.database.password=123456
-    generator.database.table_prefix=tb_   ## 表名前缀
-    generator.file.package=com.zhisland.bigant  ## 建议设置项目（根）包名称
+    generator.database.table_prefix=tb_   
+    generator.file.package=com.zhisland.bigant
 
 ```     
      
