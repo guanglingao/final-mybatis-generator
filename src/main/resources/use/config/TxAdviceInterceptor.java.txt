@@ -50,9 +50,13 @@ public class TxAdviceInterceptor {
         txMap.put("update*", requiredTx);
         txMap.put("edit*", requiredTx);
         txMap.put("renew*", requiredTx);
-        txMap.put("delete*", requiredTx);
+        txMap.put("change*", requiredTx);
+        txMap.put("flush*", requiredTx);
+        txMap.put("del*", requiredTx);
         txMap.put("remove*", requiredTx);
+        txMap.put("purge*", requiredTx);
         txMap.put("clear*", requiredTx);
+        txMap.put("drop*", requiredTx);
         txMap.put("get*", readOnlyTx);
         txMap.put("select*", readOnlyTx);
         txMap.put("query*", readOnlyTx);

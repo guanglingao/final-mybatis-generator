@@ -2,7 +2,7 @@ package ${context.parentPackage}.${param.servicePackageName};
 
 import ${context.parentPackage}.${param.entityPackageName}.${context.javaBeanName}${param.entitySuffix};
 import ${context.parentPackage}.${param.mapperPackageName}.${context.javaBeanName}${param.mapperClassSuffix};
-import com.zhisland.finalmybatis.query.Query;
+import com.glinsoft.finalmybatis.query.Query;
 import lombok.Data;
 import java.util.List;
 

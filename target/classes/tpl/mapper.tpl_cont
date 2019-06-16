@@ -1,6 +1,6 @@
 package ${context.parentPackage}.${param.mapperPackageName};
 
-import com.zhisland.finalmybatis.mapper.CRUDMapper;
+import com.glinsoft.finalmybatis.mapper.CRUDMapper;
 import ${context.parentPackage}.${param.entityPackageName}.${context.javaBeanName}${param.entitySuffix};
 import org.springframework.stereotype.Repository;
 
