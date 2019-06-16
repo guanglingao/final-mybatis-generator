@@ -15,7 +15,7 @@
     <dependency>
         <groupId>com.github.glinsoft</groupId>
         <artifactId>final-mybatis-generator</artifactId>
-        <version>0.0.5</version>
+        <version>0.0.6</version>
     </dependency>
 ```    
   
