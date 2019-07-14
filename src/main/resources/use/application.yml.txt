@@ -2,7 +2,7 @@ server:
   port: 8080
   # 使用HTTPS请去除以下注释
   # ssl:
-    # key-store: keystore.p12 # 请自生成此文件
+    # key-store: keystore.p12
     # key-alias: tomcat
     # key-store-type: PKCS12
     # key-store-password: zhisland.com
@@ -18,7 +18,8 @@ mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml
   base-package: ${parentPackage}.mapper
 
-email:  # 邮件发送
+# 邮件发送
+email:
   host: smtp.163.com
   authentication:
     username: g15653125630@163.com
@@ -28,12 +29,17 @@ email:  # 邮件发送
     alias: 高广林
 
 swagger:
-  enable: true  # 默认为true
-  title: API    # 项目名称
-  description: System API Document   #项目文档详细描述
-  version: 1.0.0  # 版本号
+  # 默认开启文档
+  enable: true
+  # 项目名称
+  title: API
+  #项目文档详细描述
+  description: System API Document
+  # 版本号
+  version: 1.0.0
+  # 联系人
   contact:
-    name: 高广林  # 联系人
+    name: 高广林
     url: http://192.168.2.101:82/gaoguanglin/
     mail: gaoguanglin@zhisland.com
 
