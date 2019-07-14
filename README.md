@@ -15,13 +15,13 @@
 - 新建SpringBoot项目
 
 
-- 在pom.xml中添加依赖
+- 在pom.xml中添加依赖，当前最新版 0.0.8
 
 ```        
     <dependency>
         <groupId>com.github.glinsoft</groupId>
         <artifactId>final-mybatis-generator</artifactId>
-        <version>0.0.7</version>
+        <version>${version}</version>
     </dependency>
 ```    
   
