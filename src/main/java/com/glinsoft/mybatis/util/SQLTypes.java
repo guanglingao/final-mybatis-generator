@@ -11,15 +11,15 @@ public class SQLTypes {
 	private static Map<String, String> javaTypeMap = new HashMap<String, String>();
 	private static Map<String, String> javaBoxTypeMap = new HashMap<String, String>();
 	private static Map<String, String> mybatisTypeMap = new HashMap<String, String>();
-	
+
 	static {
 		javaTypeMap.put("bigint", "long");
 		javaTypeMap.put("binary", "byte[]");
 		javaTypeMap.put("bit", "boolean");
 		javaTypeMap.put("blob", "byte[]");
 		javaTypeMap.put("char", "String");
-		javaTypeMap.put("date", "Date");
-		javaTypeMap.put("datetime", "Date");
+		javaTypeMap.put("date", "LocalDate");
+		javaTypeMap.put("datetime", "LocalDateTime");
 		javaTypeMap.put("decimal", "BigDecimal");
 		javaTypeMap.put("double", "double");
 		javaTypeMap.put("float", "float");
@@ -31,13 +31,15 @@ public class SQLTypes {
 		javaTypeMap.put("numeric", "BigDecimal");
 		javaTypeMap.put("nvarchar", "String");
 		javaTypeMap.put("real", "float");
-		javaTypeMap.put("smalldatetime", "Date");
+		javaTypeMap.put("smalldatetime", "LocalDateTime");
 		javaTypeMap.put("smallint", "int");
 		javaTypeMap.put("smallmoney", "BigDecimal");
 		javaTypeMap.put("sql_variant", "String");
 		javaTypeMap.put("text", "String");
 		javaTypeMap.put("tinyint", "int");
-		javaTypeMap.put("timestamp", "Date");
+		javaTypeMap.put("timestamp", "LocalDateTime");
+		javaTypeMap.put("time", "String");
+		javaTypeMap.put("year", "String");
 		javaTypeMap.put("uniqueidentifier", "String");
 		javaTypeMap.put("varbinary", "byte[]");
 		javaTypeMap.put("varchar", "String");
@@ -47,8 +49,9 @@ public class SQLTypes {
 		javaBoxTypeMap.put("bit", "Boolean");
 		javaBoxTypeMap.put("blob", "Byte[]");
 		javaBoxTypeMap.put("char", "String");
-		javaBoxTypeMap.put("date", "Date");
-		javaBoxTypeMap.put("datetime", "Date");
+		javaBoxTypeMap.put("date", "LocalDate");
+		javaBoxTypeMap.put("datetime", "LocalDateTime");
+		javaBoxTypeMap.put("time", "String");
 		javaBoxTypeMap.put("decimal", "BigDecimal");
 		javaBoxTypeMap.put("double", "Double");
 		javaBoxTypeMap.put("float", "Float");
@@ -60,13 +63,13 @@ public class SQLTypes {
 		javaBoxTypeMap.put("numeric", "BigDecimal");
 		javaBoxTypeMap.put("nvarchar", "String");
 		javaBoxTypeMap.put("real", "Float");
-		javaBoxTypeMap.put("smalldatetime", "Date");
+		javaBoxTypeMap.put("smalldatetime", "LocalDateTime");
 		javaBoxTypeMap.put("smallint", "Integer");
 		javaBoxTypeMap.put("smallmoney", "BigDecimal");
 		javaBoxTypeMap.put("sql_variant", "String");
 		javaBoxTypeMap.put("text", "String");
 		javaBoxTypeMap.put("tinyint", "int");
-		javaBoxTypeMap.put("timestamp", "Date");
+		javaBoxTypeMap.put("timestamp", "LocalDateTime");
 		javaBoxTypeMap.put("uniqueidentifier", "String");
 		javaBoxTypeMap.put("varbinary", "Byte[]");
 		javaBoxTypeMap.put("varchar", "String");
@@ -80,6 +83,7 @@ public class SQLTypes {
 		mybatisTypeMap.put("char", "CHAR");
 		mybatisTypeMap.put("date", "TIMESTAMP");
 		mybatisTypeMap.put("datetime", "TIMESTAMP");
+		mybatisTypeMap.put("time", "VARCHAR");
 		mybatisTypeMap.put("decimal", "DECIMAL");
 		mybatisTypeMap.put("double", "DOUBLE");
 		mybatisTypeMap.put("float", "FLOAT");

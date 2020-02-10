@@ -2,23 +2,23 @@ package ${parentPackage}.config;
 
 
 import ${parentPackage}.controller.interceptor.GlobalInterceptor;
-import ${parentPackage}.controller.interceptor.CrossDomainInterceptor;
-import org.apache.catalina.Context;
-import org.apache.tomcat.util.descriptor.web.SecurityCollection;
-import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-
 import java.nio.charset.Charset;
 import java.util.List;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import javax.persistence.EntityManager;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 
 
 @Configuration
@@ -27,8 +27,6 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private GlobalInterceptor globalInterceptor;
-    @Autowired
-    private CrossDomainInterceptor crossDomainInterceptor;
 
 
     /**
@@ -41,9 +39,24 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(globalInterceptor)
                 .addPathPatterns(globalInterceptor.getIncludePathPatterns())
                 .excludePathPatterns(globalInterceptor.getExcludePathPatterns());
-        registry.addInterceptor(crossDomainInterceptor)
-                        .addPathPatterns(crossDomainInterceptor.getIncludePathPatterns())
-                        .excludePathPatterns(crossDomainInterceptor.getExcludePathPatterns());
+    }
+
+
+    /**
+     * 跨域资源共享
+     *
+     * @return
+     */
+    @Bean
+    public CorsFilter corsFilter(){
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedMethod("*");
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**",corsConfiguration);
+        return new CorsFilter(source);
     }
 
 
@@ -60,8 +73,6 @@ public class WebConfiguration implements WebMvcConfigurer {
     }
 
 
-
-
     /**
      * 设置请求参数（一般为字符串类型）解析
      *
@@ -76,28 +87,28 @@ public class WebConfiguration implements WebMvcConfigurer {
 
 
     /**
-     * 使用HTTPS
+     * QueryDSL支持
      *
+     * @param entityManager
      * @return
-     *
-
+     */
     @Bean
-    public ServletWebServerFactory servletWebServerFactory() {
-        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory() {
-            @Override
-            protected void postProcessContext(Context context) {
-                SecurityConstraint securityConstraint = new SecurityConstraint();
-                securityConstraint.setUserConstraint("CONFIDENTIAL");//机密的
-                SecurityCollection securityCollection = new SecurityCollection();
-                securityCollection.addPattern("/*");
-                securityConstraint.addCollection(securityCollection);
-                context.addConstraint(securityConstraint);
-            }
-        };
-        return factory;
+    public JPAQueryFactory jpaQueryFactory(EntityManager entityManager){
+        return new JPAQueryFactory(entityManager);
     }
 
-    */
+
+    /**
+     * 启用RedisTemplate
+     */
+    @Bean
+    public RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> redis = new RedisTemplate();
+        redis.setConnectionFactory(redisConnectionFactory);
+        redis.afterPropertiesSet();
+        return redis;
+    }
+
 
 
 }

@@ -2,7 +2,6 @@ package com.glinsoft.mybatis.database;
 
 import com.glinsoft.mybatis.util.UUID;
 import lombok.Data;
-
 import java.util.List;
 
 /**
@@ -16,6 +15,8 @@ public class Table {
      private boolean useUUID;
      private final long serializeId= UUID.getUUID();
      private boolean hasDateField;
+     private boolean hasDateTimeField;
+     private boolean hasTimeField;
      private boolean hasBigDecimalField;
 
      private List<Column> columns;

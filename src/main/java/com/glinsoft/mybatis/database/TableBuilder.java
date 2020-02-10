@@ -1,7 +1,7 @@
 package com.glinsoft.mybatis.database;
 
 import com.glinsoft.mybatis.util.SQLExec;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class TableBuilder {
-
-
 
 
     private ColumnBuilder columnBuilder;
@@ -30,18 +28,28 @@ public abstract class TableBuilder {
 
     protected Table fulfillTable(Table table){
         boolean hasDateField = false;
+        boolean hasDateTimeField = false;
+        boolean hasTimeField = false;
         boolean hasBigDecimalField = false;
         List<Column> columns = table.getColumns();
         for (Column column : columns) {
-            if("Date".equals(column.getJavaType())) {
+            if("LocalDate".equals(column.getJavaType())) {
                 hasDateField = true;
+            }
+            if("LocalDateTime".equals(column.getJavaType())) {
+                hasDateTimeField = true;
             }
             if("BigDecimal".equals(column.getJavaType())) {
                 hasBigDecimalField=true;
             }
+            if("LocalTime".equals(column.getJavaType())) {
+                hasTimeField=true;
+            }
         }
         table.setHasBigDecimalField(hasBigDecimalField);
         table.setHasDateField(hasDateField);
+        table.setHasDateTimeField(hasDateTimeField);
+        table.setHasTimeField(hasTimeField);
         return table;
     }
 

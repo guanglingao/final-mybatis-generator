@@ -5,43 +5,45 @@
 
 ## 〇、为什么使用final-mybatis
 
-- 无需mybatis映射xml文件配置SQL查询
+- 可省略mybatis的SQL映射文件
 - 链式SQL支持
 - 代码自动生成工具
 
 
 ## 一、用法
 
-- 新建SpringBoot项目
+- 新建SpringBoot项目，选择SpringInitializr
 
 
-- 在pom.xml中添加依赖，当前最新版 0.0.8
+- 在pom.xml中添加依赖,自1.5.2起使用Java8的日期时间类型
+- version:1.5.5更新：支持多表名前缀，使用半角逗号分隔; 新增banner.txt
 
 ```        
     <dependency>
-        <groupId>com.github.glinsoft</groupId>
+        <groupId>com.encdata</groupId>
         <artifactId>final-mybatis-generator</artifactId>
-        <version>${version}</version>
+        <version>1.5.5</version>
     </dependency>
 ```    
   
    
-- 创建数据库连接配置文件resources/generator.properties （必须使用此文件名）    
+- 创建数据库连接配置文件resources/generator.properties （必须使用此文件名,生成工具读取此文件配置）    
 
   简洁配置请参考：
 ```
    
     generator.database.driver_class=com.mysql.cj.jdbc.Driver
-    generator.database.name=db_weizhan
-    generator.database.jdbc_url=jdbc:mysql://localhost:3306/db_weizhan?useUnicode=true&characterEncoding=utf-8
+    generator.database.name=wzd_safe_dev
+    generator.database.jdbc_url=jdbc:mysql://10.38.64.68:3306/wzd_safe_dev?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8&useSSL=false
     generator.database.username=root
-    generator.database.password=123456
-    generator.database.table_prefix=tb_   
-    generator.file.package=com.zhisland.bigant
+    generator.database.password=ennhadoop2018
+    generator.database.table_prefix=r_
+    generator.file.package=com.example.demo
 
 ```     
      
   完整配置请参考：
+  
 ```
     
     ## 数据库启动类
@@ -80,16 +82,17 @@
         . . . 
       
     public static void main(String ... args){
-        FinalMyBatisGenerator generator = new FinalMyBatisGenerator();
-        generator.generateRESTs(); // 生成完整的RESTful结构和文件
-        // generator.generateMappersOnly();  只生成Entity与Mapper文件
+        
+        FinalMyBatisGenerator.generateRESTs(); // 生成完整的RESTful结构和文件
+        // FinalMyBatisGenerator.generateMappersOnly();  只生成Entity与Mapper文件
+        // FinalMyBatisGenerator.generateRESTs(true); 数据库表字段使用驼峰命名方式
         . . .
     }
     
 
     
 ```    
-- 运行 main 方法后，将在 out目录中生成 mapper、entity、service、controller 的java文件
+- 运行 main 方法后，将在指定目录中生成项目文件
 - generateRESTs() 生成全部REST结构；generateMappersOnly() 只生成指定的表对应的Mapper和Entity；
 
 ## 二、配置其他依赖，并调整其他已生成文件的位置
@@ -101,7 +104,9 @@
 
 ## 四、 [final-mybatis详细用法请参见此链接](https://github.com/glinsoft/final-mybatis/)
 
-### API文档访问：http://localhost:8080/doc
+### API文档访问：
+#### 1. http://localhost:8080/doc.html
+#### 2. http://localhost:8080/swagger-ui.html
 
 
 

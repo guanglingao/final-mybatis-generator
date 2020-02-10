@@ -58,10 +58,12 @@ public class TxAdviceInterceptor {
         txMap.put("clear*", requiredTx);
         txMap.put("drop*", requiredTx);
         txMap.put("get*", readOnlyTx);
+        txMap.put("find*", readOnlyTx);
         txMap.put("select*", readOnlyTx);
         txMap.put("query*", readOnlyTx);
         txMap.put("count*", readOnlyTx);
         txMap.put("list*", readOnlyTx);
+        txMap.put("page*", readOnlyTx);
         source.setNameMap( txMap );
         TransactionInterceptor txAdvice = new TransactionInterceptor(transactionManager, source);
         return txAdvice;

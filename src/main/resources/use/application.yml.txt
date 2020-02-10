@@ -1,47 +1,25 @@
 server:
   port: 8080
-  # 使用HTTPS请去除以下注释
+  # 使用HTTPS时，使用此命令生成文件：keytool -genkey -alias tomcat -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
+  # 由于SpringBoot版本更新，请使用相应名称，检查：SSLConfiguration的@ConditionalOnProperty配置
   # ssl:
     # key-store: keystore.p12
     # key-alias: tomcat
     # key-store-type: PKCS12
-    # key-store-password: zhisland.com
+    # key-store-password: 11451023
 
 logging:
-  file: /Users/gaoguanglin/Desktop/app.log
   level:
     root: info
     ${parentPackage}: debug
-
+  file:
+    path: /Users/gaoguanglin/Desktop/
+    name: demo.log
 
 mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml
   base-package: ${parentPackage}.mapper
 
-# 邮件发送
-email:
-  host: smtp.163.com
-  authentication:
-    username: g15653125630@163.com
-    password: zhisland1115
-  from:
-    e_address: g15653125630@163.com
-    alias: 高广林
-
-swagger:
-  # 默认开启文档
-  enable: true
-  # 项目名称
-  title: API
-  #项目文档详细描述
-  description: System API Document
-  # 版本号
-  version: 1.0.0
-  # 联系人
-  contact:
-    name: 高广林
-    url: http://192.168.2.101:82/gaoguanglin/
-    mail: gaoguanglin@zhisland.com
 
 spring:
   datasource:
@@ -49,3 +27,12 @@ spring:
     url: ${param.jdbcUrl}
     username: ${param.username}
     password: ${param.password}
+  jpa:
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  redis:
+    host: 10.38.128.83
+    port: 6379
+    password:

@@ -20,25 +20,47 @@ import java.util.*;
 public class FinalMyBatisGenerator {
 
 
+    /**
+     * 生成全部文件，数据库列名使用下划线连接
+     */
+    public static void generateRESTs(){
+        new FinalMyBatisGenerator().generateTableWithREST(true,false);
+    }
 
-    public void generateRESTs(){
-       generateTableWithREST(true);
-   }
+    /**
+     * 生成全部文件
+     * @param columnUseCamel 列名使用驼峰形式
+     */
+    public static void generateRESTs(boolean columnUseCamel){
+        new FinalMyBatisGenerator().generateTableWithREST(true,columnUseCamel);
+    }
 
-    public void generateMappersOnly(){
-       generateTableWithREST(false);
-   }
+    /**
+     * 只生成MyBatis映射文件，数据库列名使用下划线连接
+     */
+    public static void generateMappersOnly(){
+        new FinalMyBatisGenerator().generateTableWithREST(false,false);
+    }
+
+    /**
+     * 只生成MyBatis映射文件
+     * @param columnUseCamel 列名使用驼峰形式
+     */
+    public static void generateMappersOnly(boolean columnUseCamel){
+        new FinalMyBatisGenerator().generateTableWithREST(false,columnUseCamel);
+    }
 
     private List<String>  tableNames;
 
     /**
      * 执行文件生成
      * @param rest true:生成REST的全部文件，false:仅生成mappers和entities
+     * @param columnUseCamel 列名是否使用驼峰方式
      */
-    private void generateTableWithREST(boolean rest) {
+    private void generateTableWithREST(boolean rest,boolean columnUseCamel) {
         System.out.println("开始生成，此代码生成工具仅支持『MySQL』、『MSSQLServer』两种数据库的代码自动生成。");
         // 数据库表部分
-        DatabaseConfig databaseConfig = GeneratorConfig.loadDatabaseConfig();
+        DatabaseConfig databaseConfig = GeneratorConfig.loadDatabaseConfig(!columnUseCamel);
         TableAnalyser analyser = TableAnalyserFactory.get(databaseConfig);
         List<Table> tables = analyser.getTableBuilder(databaseConfig).tables(analyser.getDataSource(databaseConfig), GeneratorConfig.database(), GeneratorConfig.tables());
         Map<String, String> exceptions = new HashMap<>();
@@ -187,8 +209,13 @@ public class FinalMyBatisGenerator {
     private String removeTablePrefix(String tableName) {
         String tablePrefix = (String)GeneratorConfig.param().get("tablePrefix");
         if(org.apache.commons.lang.StringUtils.isNotBlank(tablePrefix)) {
-            if(tableName.startsWith(tablePrefix)) {
-                tableName = tableName.substring(tablePrefix.length());
+            String[] arrTablePrefix = tablePrefix.split(",");
+            for(String prefixOne : arrTablePrefix){
+                if(org.apache.commons.lang.StringUtils.isNotBlank(prefixOne)){
+                    if(tableName.startsWith(prefixOne)) {
+                        tableName = tableName.substring(prefixOne.length());
+                    }
+                }
             }
         }
         return tableName;

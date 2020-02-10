@@ -1,6 +1,9 @@
 package ${context.parentPackage}.${param.servicePackageName};
 
+
+import ${context.parentPackage}.entity.Page;
 import ${context.parentPackage}.${param.entityPackageName}.${context.javaBeanName}${param.entitySuffix};
+import ${context.parentPackage}.${param.voPackageName}.${context.javaBeanName}${param.voClassSuffix};
 import ${context.parentPackage}.${param.mapperPackageName}.${context.javaBeanName}${param.mapperClassSuffix};
 import com.glinsoft.finalmybatis.query.Query;
 import lombok.Data;
@@ -9,6 +12,7 @@ import java.util.List;
 
 @Data
 public class ${context.javaBeanName}${param.serviceSuffix} {
+
 
 
     private ${context.javaBeanName}${param.mapperClassSuffix} mapper;
@@ -28,9 +32,10 @@ public class ${context.javaBeanName}${param.serviceSuffix} {
      */
     #foreach($column in $columns)
     #if(${column.isPrimaryKey()})
-    public ${column.javaTypeBox} add(${context.javaBeanName}${param.entitySuffix} o){
-        mapper.insert(o);
-        return o.get${column.javaFieldNameUF}();
+    public ${column.javaTypeBox} add(${context.javaBeanName}${param.voClassSuffix} o){
+        ${context.javaBeanName}${param.entitySuffix} po = o.toPO();
+        mapper.insert(po);
+        return po.get${column.javaFieldNameUF}();
     }
     #end
     #end
@@ -41,8 +46,8 @@ public class ${context.javaBeanName}${param.serviceSuffix} {
      * 批量增添记录
      * @param list 待存储记录列表
      */
-    public void addBatch(List<${context.javaBeanName}${param.entitySuffix}> list){
-        mapper.insertBatch(list);
+    public void addBatch(List<${context.javaBeanName}${param.voClassSuffix}> list){
+        mapper.insertBatch(${context.javaBeanName}${param.voClassSuffix}.toPO(list));
     }
 
 
@@ -51,8 +56,8 @@ public class ${context.javaBeanName}${param.serviceSuffix} {
      * 根据ID，单个更新
      * @param o
      */
-    public void update(${context.javaBeanName}${param.entitySuffix} o){
-            mapper.update(o);
+    public void update(${context.javaBeanName}${param.voClassSuffix} o){
+            mapper.update(o.toPO());
     }
 
 
@@ -61,9 +66,9 @@ public class ${context.javaBeanName}${param.serviceSuffix} {
      * 批量更新
      * @param list
      */
-    public void updateBatch(List<${context.javaBeanName}${param.entitySuffix}> list){
-        for(${context.javaBeanName} o:list){
-            mapper.update(o);
+    public void updateBatch(List<${context.javaBeanName}${param.voClassSuffix}> list){
+        for(${context.javaBeanName}${param.voClassSuffix} o:list){
+            mapper.update(o.toPO());
         }
     }
 
@@ -107,19 +112,27 @@ public class ${context.javaBeanName}${param.serviceSuffix} {
      * @param pageSize 每页显示数据数
      * @return 返回查询页的数据
      */
-    public List<${context.javaBeanName}${param.entitySuffix}> listPage(int pageIndex,int pageSize){
-        return mapper.list(new Query().page(pageIndex,pageSize));
+    public Page<${context.javaBeanName}${param.voClassSuffix}> listPage(int pageIndex,int pageSize){
+        long total = count();
+        List<${context.javaBeanName}${param.entitySuffix}> data = mapper.list(new Query().page(pageIndex,pageSize));
+        return Page.<${context.javaBeanName}${param.voClassSuffix}>builder()
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .total(total)
+                .pageTotal(total%pageSize==0L?(int)(total/pageSize):(int)(total/pageSize+1))
+                .data(${context.javaBeanName}${param.voClassSuffix}.fromPO(data))
+                .build();
     }
 
 
 
     /**
-     * 按照ID查询
+     * 按照主键查询
      * @param id
      * @return
      */
-    public ${context.javaBeanName}${param.entitySuffix} get(${pk.javaTypeBox} id){
-        return mapper.getById(id);
+    public ${context.javaBeanName}${param.voClassSuffix} get(${pk.javaTypeBox} id){
+        return ${context.javaBeanName}${param.voClassSuffix}.fromPO(mapper.getById(id));
     }
 
 

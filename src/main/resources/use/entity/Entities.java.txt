@@ -19,13 +19,13 @@ public class Entities {
 
     #foreach($tableName in $tableNames)
 @Autowired
-    private ${tableName}${param.mapperClassSuffix} mapper${velocityCount};
+    private ${tableName}${param.mapperClassSuffix} ${tableName.toLowerCase()}Mapper;
     #end
 
     #foreach($tableName in $tableNames)
 @Bean
     public ${tableName}${param.serviceSuffix} ${tableName}${param.serviceSuffix}(){
-        return new ${tableName}${param.serviceSuffix}(mapper${velocityCount});
+        return new ${tableName}${param.serviceSuffix}(${tableName.toLowerCase()}Mapper);
     }
     #end
 

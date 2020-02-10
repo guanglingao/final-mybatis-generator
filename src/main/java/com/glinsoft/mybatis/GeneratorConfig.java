@@ -16,7 +16,7 @@ public class GeneratorConfig {
 
     // 常量名称定义
     private final static String CHARSET ="UTF-8";
-    private final static boolean CAMEL = true;
+    private volatile static boolean CAMEL = true;
     private final static boolean USE_COLUMN_NAME = false;
     private final static String MAPPER_PACKAGE = "mapper";
     private final static String CLASS_MAPPER_SUFFIX = "Mapper";
@@ -49,35 +49,64 @@ public class GeneratorConfig {
 
     // 其他文件的生成定义
     private final static String configResource = File.separator + "use"+ File.separator+"config"+File.separator;
+    private final static String configCacheResource = File.separator + "use"+ File.separator+"config"+File.separator+"cache"+File.separator;
     private final static String controllerResource = File.separator + "use"+ File.separator+"controller"+File.separator;
     private final static String utilResource = File.separator + "use"+ File.separator+"util"+File.separator;
     private final static String entityResource = File.separator + "use"+ File.separator+"entity"+File.separator;
     private final static String eventResource = File.separator + "use"+ File.separator+"event"+File.separator;
 
+    private final static String serviceLocal = File.separator + "use"+ File.separator+"service"+File.separator+"local"+File.separator;
+    private final static String serviceRemote = File.separator + "use"+ File.separator+"service"+File.separator+"remote"+File.separator;
+
+
     private final static List<String> useFileList =
             Arrays.asList(
                     configResource+"WebConfiguration.java.txt",
+                    configResource+"SSLConfiguration.java.txt",
                     configResource+"TxAdviceInterceptor.java.txt",
                     configResource+"RequestParamBinding.java.txt",
                     configResource+"ErrorPageRouter.java.txt",
+                    configResource+"CacheLocalAdvice.java.txt",
+                    configResource+"JSON.java.txt",
+                    configResource+"Consts.java.txt",
+                    configResource+"ErrorOccurHandler.java.txt",
+                    configResource+"SwaggerConfiguration.java.txt",
+                    configCacheResource+"Cache.java.txt",
+                    configCacheResource+"CacheProvider.java.txt",
+                    configCacheResource+"GuavaCache.java.txt",
+                    configCacheResource+"RedisCache.java.txt",
                     controllerResource+"view"+File.separator+"BaseController.java.txt",
                     controllerResource+"view"+File.separator+"DefaultController.java.txt",
                     controllerResource+"interceptor"+File.separator+"GlobalInterceptor.java.txt",
-                    controllerResource+"interceptor"+File.separator+"CrossDomainInterceptor.java.txt",
                     controllerResource+"filter"+File.separator+"SecurityFilter.java.txt",
-                    controllerResource+"common"+File.separator+"JSON.java.txt",
-                    controllerResource+"common"+File.separator+"DefaultConsts.java.txt",
-                    utilResource+"EmailSupport.java.txt",
+
+                    utilResource+"Cookier.java.txt",
+                    utilResource+"Download.java.txt",
+                    utilResource+"HttpClient.java.txt",
+                    utilResource+"HttpInfo.java.txt",
+                    utilResource+"ImageBase64.java.txt",
                     utilResource+"MD5.java.txt",
-                    utilResource+"HttpReferer.java.txt",
-                    utilResource+"RandomRefer.java.txt",
-                    utilResource+"TimerScheduler.java.txt",
+                    utilResource+"RandomStr.java.txt",
+                    utilResource+"Redissor.java.txt",
+                    utilResource+"XOR.java.txt",
+                    utilResource+"Unique.java.txt",
+
                     entityResource+"Entities.java.txt",
+                    entityResource+"Page.java.txt",
+                    entityResource+"PageBuilder.java.txt",
+
                     eventResource+"Event.java.txt",
                     eventResource+"EventCenter.java.txt",
                     eventResource+"EventHandler.java.txt",
+
+                    serviceLocal+"package-info.java.txt",
+                    serviceRemote+"package-info.java.txt",
+
                     File.separator + "use"+File.separator+"application.yml.txt",
-                    File.separator + "use"+File.separator+"Application.java.txt"
+                    File.separator + "use"+File.separator+"Application.java.txt",
+                    File.separator + "use"+File.separator+"banner.txt.txt"
+
+
             );
 
 
@@ -88,11 +117,15 @@ public class GeneratorConfig {
     /**
      * 加载数据库配置
      * @return
+     *
+     * TODO 此方法应当是被调用的第一个方法，所以你在IDEA开发工具中看到此处高亮了
      */
-    protected static DatabaseConfig loadDatabaseConfig(){
-        if(configuration==null || configuration.isEmpty()){
-            init();
-        }
+    protected static DatabaseConfig loadDatabaseConfig(boolean camel2underline){
+        init();
+        // 设置数据库表列名是否使用驼峰形式
+        configuration.put("camel2underline",camel2underline);
+        GeneratorConfig.CAMEL = camel2underline;
+
         DatabaseConfig databaseConfig = new DatabaseConfig();
         databaseConfig.setDatabase((String)configuration.get("dbName"));
         databaseConfig.setDriver((String)configuration.get("driverClass"));
@@ -109,9 +142,7 @@ public class GeneratorConfig {
      * @return
      */
     protected static FileConfig loadFileConfig(String table) {
-        if(configuration==null || configuration.isEmpty()){
-            init();
-        }
+        checkNull(configuration);
         FileConfig fileConfig = new FileConfig();
         fileConfig.setTable(table);
         fileConfig.setCharset((String)configuration.get("charset"));
@@ -129,9 +160,7 @@ public class GeneratorConfig {
 
 
     public static FileConfig defaultFileConfig() {
-        if(configuration==null || configuration.isEmpty()){
-            init();
-        }
+        checkNull(configuration);
         FileConfig fileConfig = new FileConfig();
         fileConfig.setTable(null);
         fileConfig.setCharset((String)configuration.get("charset"));
@@ -155,9 +184,7 @@ public class GeneratorConfig {
      * @return
      */
     protected static String tables(){
-        if(configuration==null || configuration.isEmpty()){
-            init();
-        }
+        checkNull(configuration);
         return (String)configuration.get("tableName");
     }
 
@@ -166,9 +193,7 @@ public class GeneratorConfig {
      * @return
      */
     protected static String database(){
-        if(configuration==null || configuration.isEmpty()){
-            init();
-        }
+        checkNull(configuration);
         return (String)configuration.get("dbName");
     }
 
@@ -178,9 +203,7 @@ public class GeneratorConfig {
      * @return
      */
     protected static String parentPackage(){
-        if(configuration==null || configuration.isEmpty()){
-            init();
-        }
+        checkNull(configuration);
         return (String)configuration.get("packageName");
     }
 
@@ -189,9 +212,7 @@ public class GeneratorConfig {
      * @return
      */
     protected static String destination(){
-        if(configuration==null || configuration.isEmpty()){
-            init();
-        }
+        checkNull(configuration);
         String destination = System.getProperty("user.dir")+
                 File.separator+"src"+
                 File.separator+"main"+
@@ -315,5 +336,10 @@ public class GeneratorConfig {
     }
 
 
+    private static void checkNull(Object o){
+        if(o==null){
+            throw new RuntimeException("配置尚未初始化");
+        }
+    }
 
 }

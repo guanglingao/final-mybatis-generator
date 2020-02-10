@@ -2,7 +2,6 @@ package com.glinsoft.mybatis.database;
 
 import com.glinsoft.mybatis.database.mysql.MySQLAnalyser;
 import com.glinsoft.mybatis.database.sqlserver.SQLServerAnalyser;
-
 import java.util.HashMap;
 import java.util.Map;
 

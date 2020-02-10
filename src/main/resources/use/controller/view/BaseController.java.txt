@@ -1,8 +1,7 @@
 package ${parentPackage}.controller.view;
 
-import ${parentPackage}.util.HttpReferer;
+import ${parentPackage}.util.HttpInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,8 +14,7 @@ import java.time.Instant;
 public class BaseController {
 
 
-    @Autowired
-    private HttpReferer httpReferer;
+
 
     /**
      * 填充model通用数据
@@ -25,7 +23,7 @@ public class BaseController {
      */
     @ModelAttribute
     public void fulfillModel(HttpServletRequest request, HttpServletResponse response, Model model){
-        String ip = httpReferer.getClientIp(request);
+        String ip = HttpInfo.getClientIp(request);
         log.info("==> Request IP: {}",ip);
         model.addAttribute("instant",Instant.now());
         model.addAttribute("ip",ip);
